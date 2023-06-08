@@ -50,7 +50,7 @@ class SpringexperimentsApplicationTests {
 	@Test
 	@DirtiesContext
 	void shouldCreateANewCashCard() {
-		CashCard newCashCard = new CashCard(null, 250.00, "sarah1");
+		CashCard newCashCard = new CashCard(null, 250.00, null);
 		ResponseEntity<Void> createResponse = restTemplate
 				.withBasicAuth("sarah1", "abc123")
 				.postForEntity("/cashcards", newCashCard, Void.class);
@@ -149,8 +149,16 @@ class SpringexperimentsApplicationTests {
 	@Test
 	void shouldRejectUsersWhoAreNotCardOwners() {
 		ResponseEntity<String> response2 = restTemplate
-				.withBasicAuth("test", "password")
+				.withBasicAuth("hank-owns-no-cards", "qrs456")
 				.getForEntity("/cashcards/100", String.class);
-		assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+	}
+
+	@Test
+	void shouldNotAllowAccessToCashCardsTheyDoNotOwn() {
+		ResponseEntity<String> response = restTemplate
+				.withBasicAuth("sarah1", "abc123")
+				.getForEntity("/cashcards/102", String.class); // kumar2's data
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
 }

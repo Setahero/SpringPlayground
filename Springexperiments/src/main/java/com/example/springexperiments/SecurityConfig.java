@@ -24,11 +24,14 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/cashcards/").hasRole("CARD-OWNER")
+                                .requestMatchers("/cashcards/**").hasRole("CARD-OWNER")
                         )
                         .csrf((csrf) -> csrf.disable())
                         .httpBasic(withDefaults());
         return http.build();
     }
+
+
 
     @Bean
     public InMemoryUserDetailsManager testOnlyUsers(PasswordEncoder passwordEncoder) {
@@ -43,13 +46,7 @@ public class SecurityConfig {
                 .password(passwordEncoder.encode("qrs456"))
                 .roles("NON-OWNER") // new role
                 .build();
-
-        UserDetails user = User.builder()
-                .username("test")
-                .password(passwordEncoder.encode("password"))
-                .roles("CARD-OWNER")
-                .build();
-        return new InMemoryUserDetailsManager(sarah, hankOwnsNoCards, user);
+        return new InMemoryUserDetailsManager(sarah, hankOwnsNoCards);
     }
 
     @Bean
