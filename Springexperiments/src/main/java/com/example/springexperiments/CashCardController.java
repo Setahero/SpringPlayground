@@ -59,4 +59,23 @@ public class CashCardController {
                 ));
         return ResponseEntity.ok(page.getContent());
     }
+
+    @PutMapping("/{requestedId}")
+    public ResponseEntity<Void> putCashCard(@RequestBody CashCard request, @PathVariable Long requestedId, UriComponentsBuilder ucb,  Principal principal) {
+        CashCard response = cashCardRepository.findByIdAndOwner(requestedId, principal.getName());
+        if(response == null) {
+            CashCard newCashCard = new CashCard(null , request.amount(), principal.getName());
+            cashCardRepository.save(newCashCard);
+            URI location = ucb.path("cashcards/{id}")
+                    .buildAndExpand(newCashCard.id())
+                    .toUri();
+            return ResponseEntity.created(location).build();
+        } else {
+            CashCard newCashCard = new CashCard(requestedId, request.amount(), principal.getName());
+            cashCardRepository.save(newCashCard);
+            return ResponseEntity.noContent().build();
+        }
+    }
+
+
 }
