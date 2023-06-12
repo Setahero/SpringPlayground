@@ -2,6 +2,7 @@ package config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import rewards.RewardNetwork;
 import rewards.internal.RewardNetworkImpl;
@@ -21,6 +22,7 @@ import javax.sql.DataSource;
  * - Save all changes, Re-run the RewardNetworkTests.  It should now pass.
  */
 @Configuration
+@ComponentScan
 public class RewardsConfig {
 
 	DataSource dataSource;
